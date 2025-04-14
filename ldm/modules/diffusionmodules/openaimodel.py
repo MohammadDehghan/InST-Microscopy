@@ -466,6 +466,9 @@ class UNetModel(nn.Module):
         context_dim=None,                 # custom transformer support
         n_embed=None,                     # custom support for prediction of discrete ids into codebook of first stage vq model
         legacy=True,
+        use_lora=False,                   # LoRA support
+        lora_rank=4,                      # LoRA rank
+        lora_alpha=1.0,                   # LoRA alpha
     ):
         super().__init__()
         if use_spatial_transformer:
@@ -545,7 +548,6 @@ class UNetModel(nn.Module):
                         num_heads = ch // num_head_channels
                         dim_head = num_head_channels
                     if legacy:
-                        #num_heads = 1
                         dim_head = ch // num_heads if use_spatial_transformer else num_head_channels
                     layers.append(
                         AttentionBlock(
@@ -555,7 +557,9 @@ class UNetModel(nn.Module):
                             num_head_channels=dim_head,
                             use_new_attention_order=use_new_attention_order,
                         ) if not use_spatial_transformer else SpatialTransformer(
-                            ch, num_heads, dim_head, depth=transformer_depth, context_dim=context_dim
+                            ch, num_heads, dim_head, depth=transformer_depth, 
+                            context_dim=context_dim, use_lora=use_lora,
+                            lora_rank=lora_rank, lora_alpha=lora_alpha
                         )
                     )
                 self.input_blocks.append(TimestepEmbedSequential(*layers))
@@ -592,7 +596,6 @@ class UNetModel(nn.Module):
             num_heads = ch // num_head_channels
             dim_head = num_head_channels
         if legacy:
-            #num_heads = 1
             dim_head = ch // num_heads if use_spatial_transformer else num_head_channels
         self.middle_block = TimestepEmbedSequential(
             ResBlock(
@@ -610,7 +613,9 @@ class UNetModel(nn.Module):
                 num_head_channels=dim_head,
                 use_new_attention_order=use_new_attention_order,
             ) if not use_spatial_transformer else SpatialTransformer(
-                            ch, num_heads, dim_head, depth=transformer_depth, context_dim=context_dim
+                            ch, num_heads, dim_head, depth=transformer_depth, 
+                            context_dim=context_dim, use_lora=use_lora,
+                            lora_rank=lora_rank, lora_alpha=lora_alpha
                         ),
             ResBlock(
                 ch,
@@ -646,7 +651,6 @@ class UNetModel(nn.Module):
                         num_heads = ch // num_head_channels
                         dim_head = num_head_channels
                     if legacy:
-                        #num_heads = 1
                         dim_head = ch // num_heads if use_spatial_transformer else num_head_channels
                     layers.append(
                         AttentionBlock(
@@ -656,7 +660,9 @@ class UNetModel(nn.Module):
                             num_head_channels=dim_head,
                             use_new_attention_order=use_new_attention_order,
                         ) if not use_spatial_transformer else SpatialTransformer(
-                            ch, num_heads, dim_head, depth=transformer_depth, context_dim=context_dim
+                            ch, num_heads, dim_head, depth=transformer_depth, 
+                            context_dim=context_dim, use_lora=use_lora,
+                            lora_rank=lora_rank, lora_alpha=lora_alpha
                         )
                     )
                 if level and i == num_res_blocks:
@@ -686,10 +692,10 @@ class UNetModel(nn.Module):
         )
         if self.predict_codebook_ids:
             self.id_predictor = nn.Sequential(
-            normalization(ch),
-            conv_nd(dims, model_channels, n_embed, 1),
-            #nn.LogSoftmax(dim=1)  # change to cross_entropy and produce non-normalized logits
-        )
+                normalization(ch),
+                conv_nd(dims, model_channels, n_embed, 1),
+                #nn.LogSoftmax(dim=1)  # change to cross_entropy and produce non-normalized logits
+            )
 
     def convert_to_fp16(self):
         """
