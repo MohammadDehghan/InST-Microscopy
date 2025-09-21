@@ -45,7 +45,7 @@ To train the model, use the `main.py` script.
 
 ### **Command to Run Training**
 ```bash
-python train.py --config config.yml
+python main.py --config config.yml
 ```
 
 ### **Training Configuration**
