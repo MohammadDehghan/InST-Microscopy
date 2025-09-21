@@ -1,0 +1,12 @@
+lr:              1e-4 # Initial learning rate
+weight_decay:    1e-5
+power:           0.90
+epochs:          2 # Number of epochs to train the model   
+batch_size_tr:   8 # Batch size for train
+batch_size_va:   32 # Batch size for validationn 
+batch_size_te:   16 # Batch size for test 
+path_to_data:    'datasets/IDCIA v2/images' # path to dataset
+path_to_log:     './results/' # path to save results
+progress_p:      0.1 # value between 0-1 shows the number of time we need to report training progress in each epoch
+validation_p:    0.1 # validation percentage
+test_p:          0.2 # Test percentage (20%)
