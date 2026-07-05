@@ -167,6 +167,20 @@ We thank the authors for making their code available.
 
 If you find this repository useful, please cite our ICMLA 2025 paper:
 
+```bibtex
+@INPROCEEDINGS{11471519,
+  author={Dehghanmanshadi, Mohammad and Tavanapong, Wallapak},
+  booktitle={2025 International Conference on Machine Learning and Applications (ICMLA)},
+  title={Reducing Domain Gap with Diffusion-Based Domain Adaptation for Cell Counting},
+  year={2025},
+  pages={1452--1459},
+  doi={10.1109/ICMLA66185.2025.00221}
+}
+```
+
+You can also access the published paper on IEEE Xplore:
+https://doi.org/10.1109/ICMLA66185.2025.00221
+
 
 
 ---
